@@ -68,8 +68,8 @@
 
     .phase-list { position: relative; padding-left: 20px; }
     .phase-list::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: 6px; width: 2px; background: var(--grey-light); }
-    .phase-row { display: flex; align-items: center; gap: var(--sp-sm); padding: 2px 0; min-height: 34px; position: relative; }
-    .phase-row.current { background: var(--primary-bg); margin: 0 -8px; padding: 2px 8px; border-radius: var(--r-btn); }
+    .phase-row { display: flex; align-items: center; gap: var(--sp-reg); padding: 2px 0; min-height: 34px; position: relative; }
+    .phase-row.current { background: var(--primary-bg); margin: 0 -8px; padding: 2px 12px; border-radius: var(--r-btn); }
     .phase-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; position: absolute; left: -20px; top: 50%; transform: translateY(-50%); }
     .phase-row.past .phase-dot { background: var(--grey-medium); }
     .phase-row.current .phase-dot { background: var(--primary); box-shadow: 0 0 0 2px var(--white), 0 0 0 4px var(--primary); }
@@ -77,21 +77,31 @@
     .phase-row-label { flex: 1; font-size: 12px; font-weight: 500; color: var(--grey-dark); }
     .phase-row.past .phase-row-label { color: var(--grey-medium); font-weight: 400; }
     .phase-row.current .phase-row-label { color: var(--primary); font-weight: 600; }
-    .phase-row-dates { font-size: 11px; color: var(--grey-medium); }
+    .phase-row-dates { font-size: 11px; color: var(--grey-medium); flex-shrink: 0; white-space: nowrap; }
     .phase-row.current .phase-row-dates { color: var(--grey-dark); }
 
-    .n1-divider { margin-top: var(--sp-sm); padding-top: var(--sp-sm); border-top: 1px solid var(--grey-border); }
-    .n1-title { font-size: 11px; font-weight: 600; color: var(--grey-medium); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--sp-sm); }
-    .n1-list { padding-left: 20px; position: relative; }
-    .n1-list::before { content: ""; position: absolute; left: 5px; top: 4px; bottom: 4px; width: 2px; background: var(--grey-light); }
-    .n1-row { display: flex; align-items: center; gap: var(--sp-sm); padding: 2px 0; min-height: 28px; position: relative; }
-    .n1-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--grey-medium); flex-shrink: 0; position: absolute; left: -20px; top: 50%; transform: translateY(-50%); }
-    .n1-label { flex: 1; font-size: 11px; color: var(--grey-medium); }
-    .n1-dates { font-size: 11px; color: var(--grey-medium); }
+    .columns-wrap { display: flex; gap: 0; align-items: flex-start; }
+    .columns-wrap.n1-visible .col-left { flex: 1; min-width: 0; padding-right: var(--sp-md); }
+    .columns-wrap.n1-visible .col-right { flex: 0 0 35%; min-width: 180px; }
+    .columns-wrap:not(.n1-visible) .col-left { flex: 1; }
+    .columns-wrap:not(.n1-visible) .col-right,
+    .columns-wrap:not(.n1-visible) .col-divider { display: none; }
+    .col-divider { width: 1px; background: var(--grey-border); flex-shrink: 0; align-self: stretch; min-height: 80px; }
+    .col-left { min-width: 0; }
+    .col-right { padding-left: var(--sp-reg); }
 
-    .edit-modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
-    .edit-modal-backdrop.open { display: flex; }
-    .edit-modal { background: var(--white); border-radius: 8px; width: 480px; max-width: calc(100vw - 48px); max-height: 90vh; box-shadow: 0 8px 24px rgba(0,0,0,0.15); overflow: hidden; display: flex; flex-direction: column; }
+    .n1-title { font-size: 11px; font-weight: 600; color: var(--grey-medium); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .n1-list { position: relative; padding-left: 16px; }
+    .n1-list::before { content: ""; position: absolute; left: 3px; top: 4px; bottom: 4px; width: 2px; background: var(--grey-light); opacity: 0.7; }
+    .n1-row { display: flex; align-items: center; gap: var(--sp-sm); padding: 2px 0; min-height: 28px; position: relative; }
+    .n1-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--grey-medium); opacity: 0.7; flex-shrink: 0; position: absolute; left: -16px; top: 50%; transform: translateY(-50%); }
+    .n1-label { flex: 1; font-size: 11px; color: var(--grey-medium); opacity: 0.9; }
+    .n1-dates { font-size: 10px; color: var(--grey-medium); opacity: 0.85; margin-left: auto; flex-shrink: 0; }
+
+    .edit-panel-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; }
+    .edit-panel-backdrop.open { display: block; }
+    .edit-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: calc(100vw - 48px); background: var(--white); box-shadow: -4px 0 24px rgba(0,0,0,0.12); z-index: 201; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.25s ease; }
+    .edit-panel-backdrop.open .edit-panel { transform: translateX(0); }
     .edit-modal-header { padding: var(--sp-reg) var(--sp-md); border-bottom: 1px solid var(--grey-border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
     .edit-modal-title { font-size: 18px; font-weight: 600; color: var(--grey-dark); }
     .edit-modal-body { flex: 1; overflow-y: auto; padding: var(--sp-md); }
@@ -156,25 +166,28 @@
           </div>
         </div>
 
-        <div class="progress-section">
-          <div class="progress-label" id="progressLabel">Étape 3 sur 8 — Vote du budget</div>
-          <div class="progress-bar-track">
-            <div class="progress-bar-fill" id="progressBarFill" style="width: 25%"></div>
+        <div class="columns-wrap" id="columnsWrap">
+          <div class="col-left">
+            <div class="progress-section">
+              <div class="progress-label" id="progressLabel">Étape 3 sur 8 — Vote du budget</div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="progressBarFill" style="width: 25%"></div>
+              </div>
+            </div>
+            <div class="phase-list" id="phaseList"></div>
           </div>
-        </div>
-
-        <div class="phase-list" id="phaseList"></div>
-
-        <div class="n1-divider" id="n1Section">
-          <div class="n1-title">Exercice N-1</div>
-          <div class="n1-list" id="n1List"></div>
+          <div class="col-divider" id="colDivider"></div>
+          <div class="col-right" id="n1Section">
+            <div class="n1-title">Exercice N-1</div>
+            <div class="n1-list" id="n1List"></div>
+          </div>
         </div>
       </div>
     </main>
   </div>
 
-  <div class="edit-modal-backdrop" id="editModalBackdrop">
-    <div class="edit-modal" id="editModal">
+  <div class="edit-panel-backdrop" id="editModalBackdrop">
+    <div class="edit-panel" id="editModal">
       <div class="edit-modal-header">
         <span class="edit-modal-title">Modifier le timeline</span>
         <button class="icon-btn" id="editModalClose" aria-label="Fermer"><span class="material-icons">close</span></button>
@@ -223,6 +236,7 @@
     const phaseList = document.getElementById("phaseList");
     const n1Section = document.getElementById("n1Section");
     const n1List = document.getElementById("n1List");
+    const columnsWrap = document.getElementById("columnsWrap");
     const titleEl = document.getElementById("timelineTitle");
     const progressLabel = document.getElementById("progressLabel");
     const progressBarFill = document.getElementById("progressBarFill");
@@ -257,7 +271,7 @@
         phaseList.appendChild(row);
       });
 
-      n1Section.style.display = showN1 ? "block" : "none";
+      columnsWrap.classList.toggle("n1-visible", showN1);
       n1List.innerHTML = "";
       if (showN1) {
         config.previousYearPhases.forEach(p => {
