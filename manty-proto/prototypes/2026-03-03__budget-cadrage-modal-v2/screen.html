@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personnalisation du cadrage — v2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Design tokens (Figma Bridge confirmed) ─────────────────────────── */
+    :root {
+      --primary:       #4063A5;
+      --primary-dark:  #2D4A80;
+      --primary-bg:    #EDF1F9;
+      --primary-5:     rgba(64, 99, 165, 0.05);
+      --grey-dark:     #3F4750;
+      --grey-medium:   #6B7280;
+      --grey-border:   #BABFC7;
+      --grey-row:      rgba(63, 71, 80, 0.04);
+      --grey-light:    #F5F6F7;
+      --white:         #FFFFFF;
+      --success:       #43A047;
+      --error:         #E53935;
+      --neutral-bg:    #EEEEEE;
+      --neutral-text:  #757575;
+      --sp-sm:  8px;
+      --sp-reg: 16px;
+      --sp-md:  24px;
+      --r-btn:     8px;
+      --r-segment: 4px;
+      --r-input:   4px;
+      --r-modal:   8px;
+      --r-badge:   12px;
+      --shadow-modal: 0 8px 16px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.08);
+      --font: 'Poppins', sans-serif;
+    }
+
+    /* ── Page shell ──────────────────────────────────────────────────────── */
+    body {
+      font-family: var(--font);
+      background: rgba(0,0,0,0.5);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--sp-md);
+    }
+
+    /* ── Modal ───────────────────────────────────────────────────────────── */
+    .modal {
+      background: var(--white);
+      border-radius: var(--r-modal);
+      width: 100%;
+      min-width: 720px;
+      max-width: 996px;
+      box-shadow: var(--shadow-modal);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-md);
+      padding: var(--sp-reg);
+    }
+
+    /* ── Header ──────────────────────────────────────────────────────────── */
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--sp-reg);
+    }
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--grey-dark);
+      line-height: 1.5;
+      flex: 1;
+    }
+    .close-btn {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      border-radius: 50%;
+      color: var(--grey-medium);
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .close-btn:hover { background: var(--grey-row); }
+    .close-btn .material-icons { font-size: 20px; }
+
+    /* ── Controls section ────────────────────────────────────────────────── */
+    /*
+      Fixed: single-height bar (no phantom space, no height mismatch).
+      - Top bar: grouping control LEFT ↔ action button RIGHT, both vertically centred.
+      - Status line: one fixed-height line below the bar, right-aligned.
+        Shows helper text (when 0 selected) OR selection count (when ≥1 selected).
+    */
+    .controls-section {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .controls-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-reg);
+    }
+
+    /* LEFT — grouping control: never squeezes */
+    .grouping-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .grouping-label {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--grey-dark);
+      white-space: nowrap;
+    }
+    .segment-group {
+      display: inline-flex;
+      border: 1px solid var(--grey-border);
+      border-radius: var(--r-segment);
+      overflow: hidden;
+    }
+    .segment-btn {
+      padding: 6px 16px;
+      background: var(--white);
+      border: none;
+      border-right: 1px solid var(--grey-border);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--grey-dark);
+      cursor: pointer;
+      line-height: 1.5;
+      white-space: nowrap;
+      transition: background 0.12s, color 0.12s;
+    }
+    .segment-btn:last-child { border-right: none; }
+    .segment-btn.active { background: var(--primary); color: var(--white); font-weight: 500; }
+    .segment-btn:not(.active):hover { background: var(--grey-row); }
+
+    /* Sub-line: hint LEFT, status RIGHT — both on the same line */
+    .sub-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      min-height: 17px;
+      gap: var(--sp-reg);
+    }
+    .grouping-hint {
+      font-size: 12px;
+      color: var(--grey-medium);
+      white-space: nowrap;
+    }
+
+    /* RIGHT — action button */
+    .btn-outlined {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-sm);
+      padding: 8px 22px;
+      background: var(--white);
+      border: 1px solid var(--primary);
+      border-radius: var(--r-btn);
+      color: var(--primary);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.46px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.12s;
+      flex-shrink: 0;
+    }
+    .btn-outlined:hover:not(:disabled) { background: var(--primary-bg); }
+    .btn-outlined:disabled {
+      border-color: var(--grey-border);
+      color: var(--grey-medium);
+      cursor: not-allowed;
+    }
+    .btn-outlined .material-icons { font-size: 18px; }
+
+    .status-helper {
+      font-size: 12px;
+      color: var(--grey-medium);
+      text-align: right;
+    }
+    .status-count {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--primary);
+      text-align: right;
+    }
+
+    /* ── Table area ──────────────────────────────────────────────────────── */
+    .table-wrap {
+      border: 1px solid var(--grey-border);
+      border-radius: 4px;
+      overflow: hidden;
+      overflow-y: auto;
+      max-height: 340px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--grey-medium);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--grey-border);
+      white-space: nowrap;
+    }
+    thead th.col-amount { text-align: right; }
+    thead th.col-check  { width: 48px; text-align: center; }
+
+    thead tr.search-row th {
+      padding: 6px 8px;
+      background: var(--grey-light);
+      border-bottom: 1px solid var(--grey-border);
+    }
+    .col-search {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border: 1px solid var(--grey-border);
+      border-radius: var(--r-input);
+      padding: 4px 8px;
+      background: var(--white);
+    }
+    .col-search .material-icons { font-size: 15px; color: var(--grey-medium); }
+    .col-search input {
+      border: none;
+      outline: none;
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--grey-dark);
+      background: transparent;
+      width: 120px;
+    }
+    .col-search input::placeholder { color: var(--grey-medium); }
+
+    tbody tr { border-bottom: 1px solid var(--grey-border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td {
+      padding: 9px 12px;
+      color: var(--grey-dark);
+      vertical-align: middle;
+    }
+    tbody td.col-amount { text-align: right; }
+    tbody td.col-check  { width: 48px; text-align: center; }
+
+    tr.group-row { background: var(--grey-row); }
+    tr.group-row td { font-weight: 600; }
+    tr.group-row .group-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      user-select: none;
+    }
+    tr.group-row .chevron {
+      font-size: 18px;
+      color: var(--grey-medium);
+      transition: transform 0.15s;
+      vertical-align: middle;
+    }
+    tr.group-row.expanded .chevron { transform: rotate(90deg); }
+
+    tr.child-row td.col-chapter { padding-left: 32px; }
+    tr.row-selected { background: var(--primary-5) !important; }
+
+    tr.total-row {
+      border-top: 2px solid var(--grey-border) !important;
+      background: var(--white);
+    }
+    tr.total-row td { font-weight: 600; }
+
+    .amount-input {
+      width: 108px;
+      padding: 4px 8px;
+      border: 1px solid var(--grey-border);
+      border-radius: var(--r-input);
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--grey-dark);
+      text-align: right;
+    }
+    .amount-input:focus { outline: none; border-color: var(--primary); }
+
+    .amount-cell {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--sp-sm);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: var(--r-badge);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .badge.pos  { background: var(--success); color: var(--white); }
+    .badge.neg  { background: var(--error);   color: var(--white); }
+    .badge.zero { background: var(--neutral-bg); color: var(--neutral-text); }
+
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────────────────── */
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: var(--sp-reg);
+    }
+    .btn-text {
+      padding: 8px 11px;
+      background: none;
+      border: none;
+      border-radius: var(--r-btn);
+      color: var(--primary);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.46px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .btn-text:hover { background: var(--primary-bg); }
+    .btn-contained {
+      padding: 8px 22px;
+      background: var(--primary);
+      border: none;
+      border-radius: var(--r-btn);
+      color: var(--white);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.46px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .btn-contained:hover { background: var(--primary-dark); }
+  </style>
+</head>
+
+<body>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+    <!-- ── Header ──────────────────────────────────────────────────────── -->
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">
+        01 - Budget principal - Fontionnement - Personnaliser le cadrage
+      </h2>
+      <button class="close-btn" aria-label="Fermer">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- ── Controls section ────────────────────────────────────────────── -->
+    <!--
+      Single bar: grouping control LEFT, action button RIGHT, both vertically
+      centred. One status line below (helper when 0 selected, count when ≥1).
+      No stacking, no phantom space, no height mismatch.
+    -->
+    <div class="controls-section">
+      <div class="controls-bar">
+
+        <!-- B) Segmented control -->
+        <div class="grouping-row">
+          <span class="grouping-label">Regrouper par</span>
+          <div class="segment-group" role="group" aria-label="Ordre de regroupement">
+            <button class="segment-btn active" onclick="setGrouping(this)" aria-pressed="true">Chapitre</button>
+            <button class="segment-btn"        onclick="setGrouping(this)" aria-pressed="false">Gestionnaire</button>
+          </div>
+        </div>
+
+        <!-- A) Action button -->
+        <button class="btn-outlined" id="applyBtn" disabled aria-disabled="true">
+          <span class="material-icons">percent</span>
+          Appliquer un taux d'évolution
+        </button>
+
+      </div>
+
+      <!-- Sub-line: hint LEFT, status RIGHT — one clean row, no layout shifts -->
+      <div class="sub-line">
+        <span class="grouping-hint">Puis par l'autre</span>
+        <span class="status-helper" id="statusHelper">Sélectionnez une ou plusieurs lignes pour appliquer un taux.</span>
+        <span class="status-count"  id="statusCount"  style="display:none"></span>
+      </div>
+    </div>
+
+    <!-- ── Table ────────────────────────────────────────────────────────── -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-check">
+              <input type="checkbox" id="masterCb" onchange="onMasterChange(this)" title="Tout sélectionner">
+            </th>
+            <th>Chapitre</th>
+            <th>Gestionnaire</th>
+            <th class="col-amount">Base de cadrage</th>
+            <th class="col-amount">Montant personnalisés</th>
+          </tr>
+          <tr class="search-row">
+            <th class="col-check"></th>
+            <th>
+              <div class="col-search">
+                <span class="material-icons">search</span>
+                <input type="text" placeholder="Rechercher">
+              </div>
+            </th>
+            <th>
+              <div class="col-search">
+                <span class="material-icons">search</span>
+                <input type="text" placeholder="Rechercher">
+              </div>
+            </th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <!-- Group 011 (expanded) -->
+          <tr class="group-row expanded" id="g-011">
+            <td class="col-check">
+              <input type="checkbox" id="cb-g-011" onchange="onGroupChange('011', this)">
+            </td>
+            <td class="col-chapter">
+              <span class="group-toggle" onclick="toggleExpand('011')">
+                <span class="material-icons chevron">chevron_right</span>
+                011
+              </span>
+            </td>
+            <td></td>
+            <td class="col-amount">700 000 €</td>
+            <td><div class="amount-cell">700 000 € <span class="badge pos">+5%</span></div></td>
+          </tr>
+
+          <tr class="child-row" data-group="011">
+            <td class="col-check"><input type="checkbox" class="row-cb" onchange="onRowChange(this)"></td>
+            <td class="col-chapter">Affaires culturelles</td>
+            <td></td>
+            <td class="col-amount">300 000 €</td>
+            <td><div class="amount-cell"><input type="text" class="amount-input" value="300 000"> <span class="badge pos">+5%</span></div></td>
+          </tr>
+
+          <tr class="child-row" data-group="011">
+            <td class="col-check"><input type="checkbox" class="row-cb" onchange="onRowChange(this)"></td>
+            <td class="col-chapter">Bibliothèque</td>
+            <td></td>
+            <td class="col-amount">200 000 €</td>
+            <td><div class="amount-cell"><input type="text" class="amount-input" value="200 000"> <span class="badge pos">+5%</span></div></td>
+          </tr>
+
+          <tr class="child-row" data-group="011">
+            <td class="col-check"><input type="checkbox" class="row-cb" onchange="onRowChange(this)"></td>
+            <td class="col-chapter">Cabinet du maire</td>
+            <td></td>
+            <td class="col-amount">200 000 €</td>
+            <td><div class="amount-cell"><input type="text" class="amount-input" value="200 000"> <span class="badge pos">+5%</span></div></td>
+          </tr>
+
+          <!-- Group 012 (collapsed) -->
+          <tr class="group-row" id="g-012">
+            <td class="col-check"><input type="checkbox" class="row-cb" onchange="onRowChange(this)"></td>
+            <td class="col-chapter">
+              <span class="group-toggle" onclick="toggleExpand('012')">
+                <span class="material-icons chevron">chevron_right</span>
+                012
+              </span>
+            </td>
+            <td></td>
+            <td class="col-amount">1 780 000 €</td>
+            <td><div class="amount-cell">1 780 000 € <span class="badge neg">−5%</span></div></td>
+          </tr>
+
+          <tr class="child-row" data-group="012" style="display:none">
+            <td class="col-check"><input type="checkbox" class="row-cb" onchange="onRowChange(this)"></td>
+            <td class="col-chapter">Service des travaux</td>
+            <td></td>
+            <td class="col-amount">980 000 €</td>
+            <td><div class="amount-cell"><input type="text" class="amount-input" value="930 000"> <span class="badge neg">−5%</span></div></td>
+          </tr>
+
+          <tr class="child-row" data-group="012" style="display:none">
+            <td class="col-check"><input type="checkbox" class="row-cb" onchange="onRowChange(this)"></td>
+            <td class="col-chapter">Direction des sports</td>
+            <td></td>
+            <td class="col-amount">800 000 €</td>
+            <td><div class="amount-cell"><input type="text" class="amount-input" value="760 000"> <span class="badge neg">−5%</span></div></td>
+          </tr>
+
+          <!-- Group 65 (collapsed) -->
+          <tr class="group-row" id="g-65">
+            <td class="col-check"><input type="checkbox" class="row-cb" onchange="onRowChange(this)"></td>
+            <td class="col-chapter">
+              <span class="group-toggle" onclick="toggleExpand('65')">
+                <span class="material-icons chevron">chevron_right</span>
+                65
+              </span>
+            </td>
+            <td></td>
+            <td class="col-amount">340 000 €</td>
+            <td><div class="amount-cell">340 000 € <span class="badge zero">+0%</span></div></td>
+          </tr>
+
+          <tr class="child-row" data-group="65" style="display:none">
+            <td class="col-check"><input type="checkbox" class="row-cb" onchange="onRowChange(this)"></td>
+            <td class="col-chapter">Service social</td>
+            <td></td>
+            <td class="col-amount">340 000 €</td>
+            <td><div class="amount-cell"><input type="text" class="amount-input" value="340 000"> <span class="badge zero">+0%</span></div></td>
+          </tr>
+
+          <!-- Total row -->
+          <tr class="total-row">
+            <td class="col-check"></td>
+            <td>Total</td>
+            <td></td>
+            <td class="col-amount">3 450 000 €</td>
+            <td><div class="amount-cell">3 450 000 € <span class="badge pos">+5%</span></div></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Footer ──────────────────────────────────────────────────────── -->
+    <div class="modal-footer">
+      <button class="btn-text">Annuler</button>
+      <button class="btn-contained">Confirmer</button>
+    </div>
+
+  </div>
+
+  <script>
+    // ── Expand / collapse ───────────────────────────────────────────────
+    function toggleExpand(groupId) {
+      const row = document.getElementById('g-' + groupId);
+      const children = document.querySelectorAll('[data-group="' + groupId + '"]');
+      const open = row.classList.toggle('expanded');
+      children.forEach(r => r.style.display = open ? '' : 'none');
+    }
+
+    // ── Segmented control ───────────────────────────────────────────────
+    function setGrouping(btn) {
+      document.querySelectorAll('.segment-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+    }
+
+    // ── Selection ───────────────────────────────────────────────────────
+    function syncGroup011() {
+      const groupRow = document.getElementById('g-011');
+      if (!groupRow.classList.contains('expanded')) return;
+      const groupCb = document.getElementById('cb-g-011');
+      const children = Array.from(document.querySelectorAll('[data-group="011"] .row-cb'));
+      const n = children.filter(c => c.checked).length;
+      groupCb.checked      = n === children.length;
+      groupCb.indeterminate = n > 0 && n < children.length;
+    }
+
+    function onGroupChange(groupId, cb) {
+      document.querySelectorAll('[data-group="' + groupId + '"] .row-cb')
+        .forEach(c => c.checked = cb.checked);
+      refresh();
+    }
+
+    function onRowChange() {
+      syncGroup011();
+      refresh();
+    }
+
+    function onMasterChange(master) {
+      document.querySelectorAll('tbody input[type="checkbox"]').forEach(cb => {
+        cb.checked = master.checked;
+        cb.indeterminate = false;
+      });
+      refresh();
+    }
+
+    function refresh() {
+      // Count selectable checked rows (child rows + collapsed group rows)
+      let count = 0;
+      document.querySelectorAll('tbody tr').forEach(tr => {
+        const cb = tr.querySelector('input[type="checkbox"]');
+        if (!cb || cb.indeterminate || !cb.checked) return;
+        if (tr.classList.contains('child-row') || tr.classList.contains('group-row')) count++;
+        // highlight
+        tr.classList.toggle('row-selected', cb.checked && !cb.indeterminate);
+      });
+
+      // Action area
+      const btn    = document.getElementById('applyBtn');
+      const helper = document.getElementById('statusHelper');
+      const cnt    = document.getElementById('statusCount');
+
+      if (count > 0) {
+        btn.disabled = false;
+        btn.setAttribute('aria-disabled', 'false');
+        helper.style.display = 'none';
+        cnt.style.display    = '';
+        cnt.textContent = count === 1 ? '1 ligne sélectionnée' : count + ' lignes sélectionnées';
+      } else {
+        btn.disabled = true;
+        btn.setAttribute('aria-disabled', 'true');
+        helper.style.display = '';
+        cnt.style.display    = 'none';
+      }
+
+      // Master checkbox
+      const all = Array.from(document.querySelectorAll('tbody input[type="checkbox"]'))
+                       .filter(c => !c.indeterminate);
+      const checked = all.filter(c => c.checked).length;
+      const master  = document.getElementById('masterCb');
+      master.checked      = checked > 0 && checked === all.length;
+      master.indeterminate = checked > 0 && checked < all.length;
+    }
+
+    refresh();
+  </script>
+</body>
+</html>

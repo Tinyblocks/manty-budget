@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paramétrage des phases — Budget</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+/* ── Design tokens ────────────────────────────────────────────────────────── */
+:root {
+  --font:          'Poppins', sans-serif;
+  --primary:       #4063A5;
+  --primary-bg:    rgba(64, 99, 165, 0.08);
+  --primary-5pct:  #F5F7FA;
+  --white:         #FFFFFF;
+  --grey-dark:     #3F4750;
+  --grey-medium:   #6B7280;
+  --grey-border:   #BABFC7;
+  --grey-row:      #F4F5F7;
+  --grey-disabled: #E5E7EB;
+
+  /* Phase colors (Figma Auxiliary colors) */
+  --phase1-bg:    #B2D3EA;
+  --phase1-title: #006BBA;
+  --phase2-bg:    #CCBFE6;
+  --phase2-title: #7B5EA7;
+  --phase3-bg:    #B8D0BE;
+  --phase3-title: #2E7D32;
+  --phase4-bg:    #B9C1D1;
+  --phase4-title: #546E7A;
+
+  /* Status colors */
+  --success:       #2E7D32;
+  --success-bg:    #E8F5E9;
+  --success-border:#2E7D32;
+  --warning:       #E65100;
+  --warning-bg:    #FFF3E0;
+
+  /* Spacing */
+  --sp-sm:  8px;
+  --sp-reg: 16px;
+  --sp-md:  24px;
+  --sp-lg:  40px;
+
+  /* Radius */
+  --r-btn:     4px;
+  --r-card:    8px;
+  --r-segment: 4px;
+
+  /* Shadow */
+  --shadow-soft: 4px 8px 24px 0px rgba(0,0,0,0.06);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--grey-dark);
+  background: var(--primary-5pct);
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* ── App shell ────────────────────────────────────────────────────────────── */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+/* ── Side navigation (64px icon-only, Figma: #4063A5) ────────────────────── */
+.side-nav {
+  width: 64px;
+  flex-shrink: 0;
+  background: var(--primary);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-lg);
+  padding: var(--sp-reg);
+  height: 100%;
+}
+.side-nav-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.2);
+}
+.side-nav-logo span { font-size: 18px; font-weight: 700; color: white; }
+.nav-main, .nav-secondary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-reg);
+  flex: 1;
+}
+.nav-secondary { flex: unset; justify-content: flex-end; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-card);
+  cursor: pointer;
+  position: relative;
+}
+.nav-item .material-icons { font-size: 22px; color: rgba(255,255,255,0.7); }
+.nav-item.active { background: rgba(255,255,255,0.3); }
+.nav-item.active .material-icons { color: white; }
+.nav-item:not(.active):hover { background: rgba(255,255,255,0.1); }
+.nav-item:not(.active):hover .material-icons { color: white; }
+
+/* ── Main content ─────────────────────────────────────────────────────────── */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--white);
+}
+
+/* ── App bar ─────────────────────────────────────────────────────────────── */
+.app-bar {
+  background: var(--white);
+  box-shadow: var(--shadow-soft);
+  flex-shrink: 0;
+  z-index: 10;
+}
+.app-bar-top {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-reg);
+  padding: var(--sp-reg) var(--sp-md);
+  height: 56px;
+}
+.app-bar-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  font-size: 13px;
+  color: var(--grey-medium);
+}
+.app-bar-breadcrumb .current {
+  color: var(--primary);
+  font-weight: 600;
+}
+.app-bar-breadcrumb .sep { color: var(--grey-border); }
+.app-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--grey-dark);
+  transition: background 0.12s;
+}
+.icon-btn:hover { background: var(--grey-row); }
+.icon-btn .material-icons { font-size: 20px; }
+
+/* ── Tabs ─────────────────────────────────────────────────────────────────── */
+.tabs-bar {
+  background: var(--primary-5pct);
+  display: flex;
+  gap: 0;
+  padding: 0 var(--sp-md);
+  height: 42px;
+  border-bottom: 1px solid var(--grey-border);
+}
+.tab {
+  padding: 0 var(--sp-reg);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--grey-medium);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  transition: color 0.12s, border-color 0.12s;
+}
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+.tab:not(.active):hover { color: var(--grey-dark); border-bottom-color: var(--grey-border); }
+
+/* ── Page content ─────────────────────────────────────────────────────────── */
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-lg);
+  background: var(--primary-5pct);
+}
+
+/* ── Info section ─────────────────────────────────────────────────────────── */
+.info-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-md);
+  background: var(--white);
+  border-radius: var(--r-card);
+  padding: var(--sp-reg) var(--sp-md);
+  box-shadow: var(--shadow-soft);
+  flex-shrink: 0;
+}
+.info-left { display: flex; flex-direction: column; gap: 4px; }
+.info-label { font-size: 12px; color: var(--grey-medium); font-weight: 400; }
+.info-value { font-size: 16px; font-weight: 600; color: var(--grey-dark); }
+.info-right { display: flex; align-items: center; gap: var(--sp-md); }
+.exercise-select {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  padding: 6px 12px;
+  border: 1px solid var(--grey-border);
+  border-radius: var(--r-btn);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--grey-dark);
+  background: var(--white);
+  cursor: pointer;
+}
+.exercise-select .material-icons { font-size: 16px; color: var(--grey-medium); }
+
+/* ── Flux diagram section ─────────────────────────────────────────────────── */
+.flux-section {
+  background: var(--white);
+  border-radius: var(--r-card);
+  padding: var(--sp-md);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-lg);
+  flex-shrink: 0;
+}
+.flux-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-reg);
+}
+.flux-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+}
+.flux-legend {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-reg);
+  font-size: 12px;
+  color: var(--grey-medium);
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+
+/* ── Kanban scroll wrapper ────────────────────────────────────────────────── */
+.kanban-scroll {
+  overflow-x: auto;
+  overflow-y: visible;
+  padding-bottom: var(--sp-sm);
+}
+.kanban-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-md);
+  min-width: max-content;
+}
+
+/* ── Connector arrows ─────────────────────────────────────────────────────── */
+.connector {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  margin-top: 30px; /* vertically center with box header */
+  cursor: default;
+}
+.connector.enabled {
+  border-color: rgba(64,99,165,0.5);
+  cursor: pointer;
+}
+.connector.enabled:hover { background: var(--primary-bg); }
+.connector .material-icons { font-size: 16px; color: var(--grey-border); }
+.connector.enabled .material-icons { color: var(--primary); }
+
+/* ── Kanban Box (phase column) ────────────────────────────────────────────── */
+.kanban-box {
+  width: 319px; /* Figma: 319px, padding 24px included via box-sizing */
+  flex-shrink: 0;
+  border-radius: var(--r-card);
+  padding: var(--sp-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-reg);
+}
+/* Column colors */
+.kanban-box.phase1 { background: var(--phase1-bg); }
+.kanban-box.phase2 { background: var(--phase2-bg); }
+.kanban-box.phase3 { background: var(--phase3-bg); }
+.kanban-box.phase4 { background: var(--phase4-bg); }
+
+/* ── Column header ────────────────────────────────────────────────────────── */
+.kanban-col-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+}
+.phase-name {
+  flex: 1;
+  font-size: 15px; /* H5 = 16px; 15px fits header better without wrapping */
+  font-weight: 600;
+  line-height: 1.4;
+}
+.phase1 .phase-name { color: var(--phase1-title); }
+.phase2 .phase-name { color: var(--phase2-title); }
+.phase3 .phase-name { color: var(--phase3-title); }
+.phase4 .phase-name { color: var(--phase4-title); }
+
+/* ── "Aperçu" button ─────────────────────────────────────────────────────── */
+.btn-apercu {
+  flex-shrink: 0;
+  padding: 3px 10px;
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  color: var(--grey-medium);
+  background: rgba(255,255,255,0.7);
+  border: 1px solid var(--grey-border);
+  border-radius: var(--r-btn);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.btn-apercu:hover {
+  background: var(--white);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.col-check-icon { font-size: 18px; flex-shrink: 0; opacity: 0.7; }
+.phase1 .col-check-icon { color: var(--phase1-title); }
+.phase2 .col-check-icon { color: var(--phase2-title); }
+.phase3 .col-check-icon { color: var(--phase3-title); }
+.phase4 .col-check-icon { color: var(--phase4-title); }
+
+/* ── Status card ──────────────────────────────────────────────────────────── */
+.kanban-card {
+  background: var(--white);
+  border-radius: var(--r-card);
+  padding: var(--sp-reg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-reg);
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-sm);
+}
+.card-status-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--grey-dark);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--font);
+  white-space: nowrap;
+}
+.chip.success-filled { background: var(--success); color: white; }
+.chip.primary-outlined { border: 1px solid var(--primary); color: var(--primary); }
+.chip.success-outlined { border: 1px solid var(--success); color: var(--success); }
+.chip.grey-outlined { border: 1px solid var(--grey-border); color: var(--grey-medium); }
+.chip-row { display: flex; gap: var(--sp-reg); flex-wrap: wrap; }
+
+.card-select {
+  width: 100%;
+  padding: 7px 12px;
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--grey-dark);
+  border: 1px solid rgba(0,0,0,0.23);
+  border-radius: var(--r-card);
+  background: var(--white);
+  cursor: pointer;
+  appearance: auto;
+}
+
+/* ── Add status button ────────────────────────────────────────────────────── */
+.btn-add-status {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-sm);
+  padding: 6px 5px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--grey-dark);
+  background: transparent;
+  border: none;
+  border-radius: var(--r-card);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.12s;
+}
+.btn-add-status:hover { background: rgba(0,0,0,0.04); }
+.btn-add-status .material-icons { font-size: 16px; }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   MODAL — Aperçu du workflow
+   ════════════════════════════════════════════════════════════════════════════ */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.modal-backdrop.open { display: flex; }
+
+.modal {
+  background: var(--white);
+  border-radius: var(--r-card);
+  width: 800px;
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2),
+              0px 24px 38px 3px rgba(0,0,0,0.14),
+              0px 9px 46px 8px rgba(0,0,0,0.12);
+  overflow: hidden;
+}
+
+/* Modal header */
+.modal-header {
+  display: flex;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--grey-disabled);
+  flex-shrink: 0;
+  gap: 16px;
+}
+.modal-title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--grey-dark);
+  line-height: 1.5;
+}
+.btn-modal-close {
+  width: 32px; height: 32px;
+  border: none; background: transparent;
+  border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--grey-medium); flex-shrink: 0;
+  transition: background 0.12s;
+}
+.btn-modal-close:hover { background: var(--grey-row); color: var(--grey-dark); }
+.btn-modal-close .material-icons { font-size: 20px; }
+
+/* Controls area (rights + phase nav) */
+.modal-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--grey-disabled);
+  flex-shrink: 0;
+}
+
+/* Rights control */
+.rights-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.rights-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--grey-dark);
+  white-space: nowrap;
+  min-width: 44px;
+}
+.segment-group {
+  display: inline-flex;
+  border: 1px solid var(--grey-border);
+  border-radius: var(--r-segment);
+  overflow: hidden;
+}
+.segment-btn {
+  padding: 6px 16px;
+  background: var(--white);
+  border: none;
+  border-right: 1px solid var(--grey-border);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--grey-dark);
+  cursor: pointer;
+  line-height: 1.5;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s;
+}
+.segment-btn:last-child { border-right: none; }
+.segment-btn.active { background: var(--primary); color: var(--white); font-weight: 600; }
+.segment-btn:not(.active):hover { background: var(--grey-row); }
+
+/* Phase navigation row */
+.phase-nav-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.phase-nav-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--grey-dark);
+  min-width: 44px;
+}
+.phase-nav-btn {
+  width: 28px; height: 28px;
+  border: 1px solid var(--grey-border);
+  border-radius: var(--r-btn);
+  background: var(--white);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--grey-medium); flex-shrink: 0;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.phase-nav-btn:hover:not(:disabled) {
+  background: var(--primary-bg);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.phase-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.phase-nav-btn .material-icons { font-size: 18px; }
+
+.phase-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+.phase-chip.phase1 { background: var(--phase1-bg); color: var(--phase1-title); }
+.phase-chip.phase2 { background: var(--phase2-bg); color: var(--phase2-title); }
+.phase-chip.phase3 { background: var(--phase3-bg); color: var(--phase3-title); }
+.phase-chip.phase4 { background: var(--phase4-bg); color: var(--phase4-title); }
+.phase-chip-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%; flex-shrink: 0;
+}
+.phase-chip.phase1 .phase-chip-dot { background: var(--phase1-title); }
+.phase-chip.phase2 .phase-chip-dot { background: var(--phase2-title); }
+.phase-chip.phase3 .phase-chip-dot { background: var(--phase3-title); }
+.phase-chip.phase4 .phase-chip-dot { background: var(--phase4-title); }
+
+/* Modal body */
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Disabled state banner */
+.disabled-banner {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: #FFF3E0;
+  border-bottom: 1px solid #E65100;
+  font-size: 13px;
+  font-weight: 500;
+  color: #E65100;
+  flex-shrink: 0;
+}
+.disabled-banner.visible { display: flex; }
+.disabled-banner .material-icons { font-size: 18px; }
+
+/* Preview container */
+.preview-container {
+  flex: 1;
+  overflow: hidden;
+  transition: opacity 0.2s;
+}
+.preview-container.greyed { opacity: 0.4; pointer-events: none; }
+
+/* ── Preview table ────────────────────────────────────────────────────────── */
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  table-layout: fixed;
+}
+.preview-table col.c-flag   { width: 34px; }
+.preview-table col.c-check  { width: 36px; }
+.preview-table col.c-status { width: 160px; }
+.preview-table col.c-origin { width: 180px; }
+.preview-table col.c-amount { width: 175px; }
+.preview-table col.c-label  { width: auto; }
+
+.preview-table thead tr {
+  background: #F8F9FA;
+  border-bottom: 2px solid var(--grey-disabled);
+}
+.preview-table th {
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--grey-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.preview-table th.th-amount { text-align: right; }
+.preview-table th.th-label  { text-align: right; }
+
+/* Group row */
+.preview-table tr.group-row {
+  background: #F2F4F6;
+  border-bottom: 1px solid var(--grey-border);
+  cursor: pointer;
+}
+.preview-table tr.group-row:hover { background: #EAEDF0; }
+.preview-table tr.group-row td {
+  padding: 9px 10px;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--grey-dark);
+}
+.group-expand-btn {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--grey-medium);
+}
+.group-expand-btn .material-icons { font-size: 16px; }
+
+/* Data rows */
+.preview-table tr.data-row { border-bottom: 1px solid var(--grey-disabled); }
+.preview-table tr.data-row:last-of-type { border-bottom: none; }
+.preview-table tr.data-row:hover { background: var(--grey-row); }
+.preview-table td { padding: 9px 10px; vertical-align: middle; }
+
+/* Flag */
+.flag-cell { color: #1E2A3A; display: flex; align-items: center; justify-content: center; }
+.flag-cell .material-icons { font-size: 15px; }
+
+/* Checkbox */
+.check-cell { display: flex; align-items: center; justify-content: center; }
+.check-cell input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color: var(--primary); }
+
+/* Status pill */
+.status-pill {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 3px 8px; border-radius: 100px;
+  font-size: 11px; font-weight: 600;
+  white-space: nowrap; max-width: 100%;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.status-pill.pret    { border: 1.5px solid var(--success); color: var(--success); }
+.status-pill.traiter { border: 1.5px solid var(--warning); color: var(--warning); }
+.status-pill.valide  { border: 1.5px solid var(--success); color: var(--white); background: var(--success); }
+.status-pill.erreur  { border: 1.5px solid #B71C1C; color: #B71C1C; }
+.status-pill.grey    { border: 1.5px solid var(--grey-border); color: var(--grey-medium); }
+.status-pill.interactive { cursor: pointer; padding-right: 4px; }
+.status-pill.interactive:hover { filter: brightness(0.9); }
+.pill-arrow { font-size: 13px !important; flex-shrink: 0; }
+
+/* Origin */
+.origin-text { font-size: 12px; color: var(--grey-dark); }
+.origin-new  { color: var(--grey-medium); font-style: italic; }
+
+/* Amount */
+.amount-cell { text-align: right; }
+.amount-input-wrap {
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--grey-border);
+  border-radius: var(--r-btn);
+  background: var(--white);
+  height: 30px; width: 100%;
+}
+.amount-input-wrap:focus-within {
+  outline: 2px solid var(--primary); outline-offset: -1px; border-color: transparent;
+}
+.amount-input {
+  flex: 1; border: none; outline: none;
+  font-family: var(--font); font-size: 12px; color: var(--grey-dark);
+  text-align: right; background: transparent;
+  padding: 0 4px 0 8px; min-width: 0;
+}
+.amount-suffix { font-size: 12px; color: var(--grey-medium); padding-right: 8px; flex-shrink: 0; }
+.amount-static {
+  font-size: 12px; color: var(--grey-dark);
+  text-align: right; display: block; white-space: nowrap;
+}
+
+/* Libellé */
+.libelle-cell { text-align: right; }
+.libelle-input {
+  width: 100%;
+  border: 1px solid var(--grey-border);
+  border-radius: var(--r-btn);
+  padding: 5px 8px;
+  font-family: var(--font); font-size: 12px; color: var(--grey-dark);
+  background: var(--white); outline: none; text-align: right;
+}
+.libelle-input::placeholder { color: var(--grey-border); }
+.libelle-input:focus {
+  outline: 2px solid var(--primary); outline-offset: -1px; border-color: transparent;
+}
+.libelle-static {
+  font-size: 12px; color: var(--grey-border); font-style: italic;
+  display: block; text-align: right;
+}
+
+/* "Ajouter une inscription" row */
+.add-inscription-row td { padding: 8px 10px; }
+.btn-add-inscription {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 8px;
+  font-family: var(--font); font-size: 12px; font-weight: 600;
+  color: var(--primary); background: transparent;
+  border: none; border-radius: var(--r-btn); cursor: pointer;
+  transition: background 0.12s;
+}
+.btn-add-inscription:hover { background: var(--primary-bg); }
+.btn-add-inscription .material-icons { font-size: 16px; }
+
+/* Modal footer */
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--grey-disabled);
+  display: flex; justify-content: flex-end;
+  flex-shrink: 0;
+}
+.btn-primary-filled {
+  padding: 9px 28px;
+  font-family: var(--font); font-size: 13px; font-weight: 600;
+  letter-spacing: 0.4px;
+  color: var(--white); background: var(--primary);
+  border: none; border-radius: var(--r-btn);
+  cursor: pointer; transition: background 0.12s;
+}
+.btn-primary-filled:hover { background: #3558A0; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     APP LAYOUT
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="app-layout">
+
+  <!-- Side navigation (icon-only, 64px, Figma: Property 1=Default) -->
+  <nav class="side-nav">
+    <div class="side-nav-logo"><span>M</span></div>
+    <div class="nav-main">
+      <div class="nav-item" title="Accueil"><span class="material-icons">home</span></div>
+      <div class="nav-item" title="Décision"><span class="material-icons">dashboard</span></div>
+      <div class="nav-item active" title="Budget"><span class="material-icons">account_balance</span></div>
+      <div class="nav-item" title="Prospective RH"><span class="material-icons">people</span></div>
+    </div>
+    <div class="nav-secondary">
+      <div class="nav-item" title="Notifications"><span class="material-icons">notifications</span></div>
+      <div class="nav-item" title="Centre d'aide"><span class="material-icons">help</span></div>
+      <div class="nav-item" title="Nous contacter"><span class="material-icons">chat</span></div>
+      <div class="nav-item" title="Réglages"><span class="material-icons">settings</span></div>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main class="main-content">
+
+    <!-- App bar (Figma: App Bar Regular + Tabs below) -->
+    <header class="app-bar">
+      <div class="app-bar-top">
+        <div class="app-bar-breadcrumb">
+          <span>Budget</span>
+          <span class="sep">/</span>
+          <span>Gestion du workflow</span>
+          <span class="sep">/</span>
+          <span class="current">Paramétrage des phases</span>
+        </div>
+        <div class="app-bar-actions">
+          <button class="icon-btn" title="Partager"><span class="material-icons">share</span></button>
+          <button class="icon-btn" title="Télécharger"><span class="material-icons">download</span></button>
+          <button class="icon-btn" title="Envoyer"><span class="material-icons">send</span></button>
+        </div>
+      </div>
+      <div class="tabs-bar">
+        <button class="tab">Inscriptions</button>
+        <button class="tab active">Paramétrage</button>
+        <button class="tab">Droits</button>
+        <button class="tab">Historique</button>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <div class="page-content">
+
+      <!-- Info section (Figma: Content > Infos, 173px) -->
+      <div class="info-section">
+        <div class="info-left">
+          <span class="info-label">Exercice budgétaire</span>
+          <span class="info-value">Budget 2026 — Mairie de Saint-Étienne</span>
+        </div>
+        <div class="info-right">
+          <div class="exercise-select">
+            <span class="material-icons">calendar_today</span>
+            Budget 2026
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="exercise-select">
+            <span class="material-icons">tune</span>
+            Filtre
+            <span class="material-icons">expand_more</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagramme de flux (Figma: Diagramme de flux des phases et statuts) -->
+      <div class="flux-section">
+        <div class="flux-header">
+          <span class="flux-title">Diagramme de flux des phases et statuts</span>
+          <div class="flux-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--phase1-title)"></div>Proposition
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--phase2-title)"></div>Arbitrage
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--phase3-title)"></div>Vote
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--phase4-title)"></div>Clôturé
+            </div>
+          </div>
+        </div>
+
+        <!-- Scrollable kanban -->
+        <div class="kanban-scroll">
+          <div class="kanban-row">
+
+            <!-- Connector: disabled (before phase 1) -->
+            <div class="connector" title="Transition désactivée">
+              <span class="material-icons">arrow_forward</span>
+            </div>
+
+            <!-- Phase 1: Proposition des services (Medium Blue 30%) -->
+            <div class="kanban-box phase1">
+              <div class="kanban-col-header">
+                <span class="phase-name">1 - Proposition des services</span>
+                <button class="btn-apercu"
+                  onclick="openPreview(0)">
+                  Aperçu
+                </button>
+                <span class="material-icons col-check-icon">check_circle_outline</span>
+              </div>
+
+              <div class="kanban-card">
+                <div class="card-header">
+                  <span class="card-status-name">À traiter</span>
+                  <span class="chip success-filled">Défaut</span>
+                </div>
+                <div class="chip-row">
+                  <span class="chip primary-outlined">Inclus</span>
+                  <span class="chip success-outlined">Actif</span>
+                </div>
+                <select class="card-select">
+                  <option>Statut suivant →</option>
+                  <option>Prêt</option>
+                </select>
+              </div>
+
+              <div class="kanban-card">
+                <div class="card-header">
+                  <span class="card-status-name">Prêt</span>
+                </div>
+                <div class="chip-row">
+                  <span class="chip primary-outlined">Inclus</span>
+                  <span class="chip success-outlined">Actif</span>
+                </div>
+                <select class="card-select">
+                  <option>Statut suivant →</option>
+                  <option>Transmis</option>
+                </select>
+              </div>
+
+              <button class="btn-add-status">
+                <span class="material-icons">add</span>
+                Ajouter un statut
+              </button>
+            </div>
+
+            <!-- Connector: disabled (between phase 1 and 2) -->
+            <div class="connector" title="Transition désactivée">
+              <span class="material-icons">arrow_forward</span>
+            </div>
+
+            <!-- Phase 2: Arbitrage (Deep Purple 30%) -->
+            <div class="kanban-box phase2">
+              <div class="kanban-col-header">
+                <span class="phase-name">2 - Arbitrage</span>
+                <button class="btn-apercu"
+                  onclick="openPreview(1)">
+                  Aperçu
+                </button>
+                <span class="material-icons col-check-icon">check_circle_outline</span>
+              </div>
+
+              <div class="kanban-card">
+                <div class="card-header">
+                  <span class="card-status-name">À arbitrer</span>
+                  <span class="chip success-filled">Défaut</span>
+                </div>
+                <div class="chip-row">
+                  <span class="chip primary-outlined">Inclus</span>
+                  <span class="chip success-outlined">Actif</span>
+                </div>
+                <select class="card-select">
+                  <option>Statut suivant →</option>
+                  <option>Arbitré</option>
+                </select>
+              </div>
+
+              <div class="kanban-card">
+                <div class="card-header">
+                  <span class="card-status-name">Arbitré</span>
+                </div>
+                <div class="chip-row">
+                  <span class="chip primary-outlined">Inclus</span>
+                  <span class="chip grey-outlined">Fermé</span>
+                </div>
+                <select class="card-select">
+                  <option>Statut suivant →</option>
+                  <option>Transmis au vote</option>
+                </select>
+              </div>
+
+              <button class="btn-add-status">
+                <span class="material-icons">add</span>
+                Ajouter un statut
+              </button>
+            </div>
+
+            <!-- Connector: enabled (between phase 2 and 3) -->
+            <div class="connector enabled" title="Configurer la transition">
+              <span class="material-icons">arrow_forward</span>
+            </div>
+
+            <!-- Phase 3: Vote (Green 30%) -->
+            <div class="kanban-box phase3">
+              <div class="kanban-col-header">
+                <span class="phase-name">3 - Vote</span>
+                <button class="btn-apercu"
+                  onclick="openPreview(2)">
+                  Aperçu
+                </button>
+                <span class="material-icons col-check-icon">check_circle_outline</span>
+              </div>
+
+              <div class="kanban-card">
+                <div class="card-header">
+                  <span class="card-status-name">À voter</span>
+                  <span class="chip success-filled">Défaut</span>
+                </div>
+                <div class="chip-row">
+                  <span class="chip primary-outlined">Inclus</span>
+                  <span class="chip success-outlined">Actif</span>
+                </div>
+                <select class="card-select">
+                  <option>Statut suivant →</option>
+                  <option>Voté</option>
+                </select>
+              </div>
+
+              <div class="kanban-card">
+                <div class="card-header">
+                  <span class="card-status-name">Voté</span>
+                </div>
+                <div class="chip-row">
+                  <span class="chip primary-outlined">Inclus</span>
+                  <span class="chip success-outlined">Actif</span>
+                </div>
+                <select class="card-select">
+                  <option>Statut suivant →</option>
+                  <option>Clôturé</option>
+                </select>
+              </div>
+
+              <button class="btn-add-status">
+                <span class="material-icons">add</span>
+                Ajouter un statut
+              </button>
+            </div>
+
+            <!-- Connector: enabled (between phase 3 and 4) -->
+            <div class="connector enabled" title="Configurer la transition">
+              <span class="material-icons">arrow_forward</span>
+            </div>
+
+            <!-- Phase 4: Clôturé (Blue Gray 30%) -->
+            <div class="kanban-box phase4">
+              <div class="kanban-col-header">
+                <span class="phase-name">4 - Clôturé</span>
+                <button class="btn-apercu"
+                  onclick="openPreview(3)">
+                  Aperçu
+                </button>
+                <span class="material-icons col-check-icon">check_circle_outline</span>
+              </div>
+
+              <div class="kanban-card">
+                <div class="card-header">
+                  <span class="card-status-name">Archivé</span>
+                  <span class="chip success-filled">Défaut</span>
+                </div>
+                <div class="chip-row">
+                  <span class="chip grey-outlined">Lecture seule</span>
+                </div>
+                <select class="card-select">
+                  <option>— Fin de workflow —</option>
+                </select>
+              </div>
+
+              <button class="btn-add-status">
+                <span class="material-icons">add</span>
+                Ajouter un statut
+              </button>
+            </div>
+
+          </div><!-- /kanban-row -->
+        </div><!-- /kanban-scroll -->
+      </div><!-- /flux-section -->
+
+    </div><!-- /page-content -->
+  </main>
+</div><!-- /app-layout -->
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     MODAL — Aperçu du workflow
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
+  <div class="modal">
+
+    <!-- Modal header -->
+    <div class="modal-header">
+      <h2 class="modal-title">Aperçu du workflow</h2>
+      <button class="btn-modal-close" onclick="closeModal()" title="Fermer">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- Controls: rights + phase navigation -->
+    <div class="modal-controls">
+
+      <!-- Rights segmented control -->
+      <div class="rights-row">
+        <span class="rights-label">Droits</span>
+        <div class="segment-group" role="group" aria-label="Niveau de droits">
+          <button class="segment-btn active" data-rights="non-restreint"
+            onclick="setRights('non-restreint', this)">Non restreint</button>
+          <button class="segment-btn" data-rights="restreint-admin"
+            onclick="setRights('restreint-admin', this)">Restreint aux administrateurs</button>
+          <button class="segment-btn" data-rights="total-restreint"
+            onclick="setRights('total-restreint', this)">Totalement restreint</button>
+        </div>
+      </div>
+
+      <!-- Phase navigation -->
+      <div class="phase-nav-row">
+        <span class="phase-nav-label">Phase</span>
+        <button class="phase-nav-btn" id="btnPrevPhase" onclick="changePhase(-1)" title="Phase précédente" disabled>
+          <span class="material-icons">chevron_left</span>
+        </button>
+        <div class="phase-chip phase1" id="phaseChip">
+          <span class="phase-chip-dot"></span>
+          <span id="phaseChipName">1 - Proposition des services</span>
+        </div>
+        <button class="phase-nav-btn" id="btnNextPhase" onclick="changePhase(1)" title="Phase suivante">
+          <span class="material-icons">chevron_right</span>
+        </button>
+      </div>
+
+    </div><!-- /modal-controls -->
+
+    <!-- Modal body -->
+    <div class="modal-body">
+
+      <!-- Disabled state banner (shown for "Totalement restreint") -->
+      <div class="disabled-banner" id="disabledBanner">
+        <span class="material-icons">block</span>
+        Accès désactivé pour ce profil.
+      </div>
+
+      <!-- Preview table -->
+      <div class="preview-container" id="previewContainer">
+        <table class="preview-table" id="previewTable">
+          <colgroup>
+            <col class="c-flag">
+            <col class="c-check">
+            <col class="c-status">
+            <col class="c-origin">
+            <col class="c-amount">
+            <col class="c-label">
+          </colgroup>
+          <thead>
+            <tr>
+              <th></th>
+              <th><div class="check-cell"><input type="checkbox" aria-label="Tout sélectionner"></div></th>
+              <th>Statut</th>
+              <th>Inscription d'origine</th>
+              <th class="th-amount">Montant de l'inscription</th>
+              <th class="th-label">Libellé</th>
+            </tr>
+          </thead>
+          <tbody id="previewTbody">
+            <!-- Rows rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /modal-body -->
+
+    <!-- Modal footer -->
+    <div class="modal-footer">
+      <button class="btn-primary-filled" onclick="closeModal()">Fermer</button>
+    </div>
+
+  </div><!-- /modal -->
+</div><!-- /modal-backdrop -->
+
+
+<script>
+/* ── Phase data (indexed 0–3) ─────────────────────────────────────────────── */
+const phases = [
+  {
+    key: 'phase1', name: '1 - Proposition des services',
+    groupCode: '011', groupLabel: 'Charges de fonctionnement', groupStatus: 'traiter',
+    rows: [
+      { statut: 'Prêt',      cls: 'pret',    origin: 'Nouvelle inscription', isNew: true,  montant: 145000 },
+      { statut: 'Prêt',      cls: 'pret',    origin: '123\u202f000\u00a0€',  isNew: false, montant: 200000 },
+      { statut: 'Prêt',      cls: 'pret',    origin: 'Nouvelle inscription', isNew: true,  montant: 300000 },
+    ]
+  },
+  {
+    key: 'phase2', name: '2 - Arbitrage',
+    groupCode: '011', groupLabel: 'Charges de fonctionnement', groupStatus: 'pret',
+    rows: [
+      { statut: 'Arbitré',    cls: 'valide',  origin: 'Nouvelle inscription', isNew: true,  montant: 145000 },
+      { statut: 'À arbitrer', cls: 'traiter', origin: '123\u202f000\u00a0€',  isNew: false, montant: 200000 },
+      { statut: 'Arbitré',    cls: 'valide',  origin: 'Nouvelle inscription', isNew: true,  montant: 300000 },
+    ]
+  },
+  {
+    key: 'phase3', name: '3 - Vote',
+    groupCode: '011', groupLabel: 'Charges de fonctionnement', groupStatus: 'valide',
+    rows: [
+      { statut: 'Voté',            cls: 'valide',  origin: 'Nouvelle inscription', isNew: true,  montant: 145000 },
+      { statut: 'À voter',         cls: 'traiter', origin: '123\u202f000\u00a0€',  isNew: false, montant: 200000 },
+      { statut: 'Refus technique', cls: 'erreur',  origin: 'Nouvelle inscription', isNew: true,  montant: 300000 },
+    ]
+  },
+  {
+    key: 'phase4', name: '4 - Clôturé',
+    groupCode: '011', groupLabel: 'Charges de fonctionnement', groupStatus: 'grey',
+    rows: [
+      { statut: 'Archivé', cls: 'grey', origin: '523\u202f000\u00a0€', isNew: false, montant: 145000 },
+      { statut: 'Archivé', cls: 'grey', origin: '123\u202f000\u00a0€', isNew: false, montant: 200000 },
+    ]
+  }
+];
+
+/* ── State ────────────────────────────────────────────────────────────────── */
+let currentPhaseIdx = 0;
+let currentRights   = 'non-restreint';
+
+/* ── Helpers ──────────────────────────────────────────────────────────────── */
+function fmtMontant(n) {
+  return n.toLocaleString('fr-FR') + '\u00a0€';
+}
+
+/* ── Modal open / close ───────────────────────────────────────────────────── */
+function openPreview(phaseIdx) {
+  currentPhaseIdx = (typeof phaseIdx === 'number') ? phaseIdx : 0;
+  /* Reset rights to default on open */
+  currentRights = 'non-restreint';
+  document.querySelectorAll('.segment-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.rights === 'non-restreint');
+  });
+  document.getElementById('modalBackdrop').classList.add('open');
+  updatePhaseChip();
+  renderTable();
+}
+
+function closeModal() {
+  document.getElementById('modalBackdrop').classList.remove('open');
+}
+
+function handleBackdropClick(e) {
+  if (e.target === document.getElementById('modalBackdrop')) closeModal();
+}
+
+/* ── Phase navigation ─────────────────────────────────────────────────────── */
+function changePhase(delta) {
+  const newIdx = currentPhaseIdx + delta;
+  if (newIdx < 0 || newIdx >= phases.length) return;
+  currentPhaseIdx = newIdx;
+  updatePhaseChip();
+  renderTable();
+}
+
+function updatePhaseChip() {
+  const phase = phases[currentPhaseIdx];
+  const chip  = document.getElementById('phaseChip');
+  chip.className = 'phase-chip ' + phase.key;
+  document.getElementById('phaseChipName').textContent = phase.name;
+  document.getElementById('btnPrevPhase').disabled = currentPhaseIdx === 0;
+  document.getElementById('btnNextPhase').disabled = currentPhaseIdx === phases.length - 1;
+}
+
+/* ── Rights control ───────────────────────────────────────────────────────── */
+function setRights(rights, btn) {
+  currentRights = rights;
+  document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+/* ── Render table ─────────────────────────────────────────────────────────── */
+function renderTable() {
+  const data    = phases[currentPhaseIdx];
+  const isWrite = currentRights === 'non-restreint';
+  const isDisab = currentRights === 'total-restreint';
+
+  document.getElementById('disabledBanner').classList.toggle('visible', isDisab);
+  document.getElementById('previewContainer').classList.toggle('greyed', isDisab);
+
+  /* Group row status pill */
+  const groupLabel = { pret: 'Prêt', traiter: 'À traiter', valide: 'Validé', grey: 'Archivé' }[data.groupStatus] || data.groupStatus;
+  const groupPillHtml = isWrite
+    ? `<span class="status-pill ${data.groupStatus} interactive">
+         ${groupLabel}<span class="material-icons pill-arrow">arrow_drop_down</span>
+       </span>`
+    : `<span class="status-pill ${data.groupStatus}">${groupLabel}</span>`;
+
+  const groupTotal = data.rows.reduce((s, r) => s + r.montant, 0);
+
+  let html = `
+    <tr class="group-row">
+      <td><div class="group-expand-btn"><span class="material-icons">expand_more</span></div></td>
+      <td></td>
+      <td>${groupPillHtml}</td>
+      <td style="font-size:12px;color:var(--grey-medium)">${data.groupCode} — ${data.groupLabel}</td>
+      <td class="amount-cell" style="font-weight:600">${fmtMontant(groupTotal)}</td>
+      <td></td>
+    </tr>
+  `;
+
+  html += data.rows.map(row => {
+    const statusHtml = isWrite
+      ? `<span class="status-pill ${row.cls} interactive">
+           ${row.statut}<span class="material-icons pill-arrow">arrow_drop_down</span>
+         </span>`
+      : `<span class="status-pill ${row.cls}">${row.statut}</span>`;
+
+    const amountHtml = isWrite
+      ? `<div class="amount-input-wrap">
+           <input class="amount-input" value="${row.montant.toLocaleString('fr-FR')}" type="text" aria-label="Montant">
+           <span class="amount-suffix">€</span>
+         </div>`
+      : `<span class="amount-static">${fmtMontant(row.montant)}</span>`;
+
+    const libelleHtml = isWrite
+      ? `<input class="libelle-input" type="text" placeholder="Ajouter un libellé">`
+      : `<span class="libelle-static">Ajouter un libellé</span>`;
+
+    const originHtml = row.isNew
+      ? `<span class="origin-text origin-new">Nouvelle inscription</span>`
+      : `<span class="origin-text">${row.origin}</span>`;
+
+    return `
+      <tr class="data-row">
+        <td><div class="flag-cell"><span class="material-icons">bookmark</span></div></td>
+        <td><div class="check-cell"><input type="checkbox"></div></td>
+        <td>${statusHtml}</td>
+        <td>${originHtml}</td>
+        <td class="amount-cell">${amountHtml}</td>
+        <td class="libelle-cell">${libelleHtml}</td>
+      </tr>
+    `;
+  }).join('');
+
+  /* "Ajouter une inscription" — visible except when totally restricted */
+  if (!isDisab) {
+    html += `
+      <tr class="add-inscription-row">
+        <td></td>
+        <td colspan="5">
+          <button class="btn-add-inscription">
+            <span class="material-icons">add_circle_outline</span>
+            Ajouter une inscription
+          </button>
+        </td>
+      </tr>
+    `;
+  }
+
+  document.getElementById('previewTbody').innerHTML = html;
+}
+
+/* Keyboard: Escape closes modal */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+</script>
+
+</body>
+</html>

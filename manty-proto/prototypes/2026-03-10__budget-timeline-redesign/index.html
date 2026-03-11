@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Timeline — Prototype Manty</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      --font: 'Poppins', sans-serif;
+      --primary: #4063A5;
+      --primary-bg: rgba(64, 99, 165, 0.08);
+      --primary-5pct: #F5F7FA;
+      --grey-dark: #3F4750;
+      --grey-medium: #6B7280;
+      --grey-border: #BABFC7;
+      --grey-row: #F4F5F7;
+      --grey-light: #E5E7EB;
+      --white: #FFFFFF;
+      --success: #2E7D32;
+      --sp-sm: 8px;
+      --sp-reg: 16px;
+      --sp-md: 24px;
+      --sp-lg: 40px;
+      --r-btn: 4px;
+      --r-card: 8px;
+      --shadow-soft: 4px 8px 24px 0px rgba(0,0,0,0.06);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { overflow-x: hidden; height: 100%; }
+    body { font-family: var(--font); font-size: 14px; color: var(--grey-dark); background: var(--primary-5pct); }
+
+    .app-layout { display: flex; height: 100vh; width: 100%; overflow: hidden; }
+    .app-bar {
+      position: fixed; top: 0; left: 0; right: 0; height: 64px;
+      background: var(--white); box-shadow: var(--shadow-soft); z-index: 100;
+    }
+    .side-nav {
+      position: fixed; top: 64px; left: 0; bottom: 0; width: 64px;
+      background: var(--primary); display: flex; flex-direction: column;
+      align-items: center; padding: var(--sp-reg) 0; gap: var(--sp-reg);
+    }
+    .nav-item {
+      display: flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: var(--r-card);
+      color: rgba(255,255,255,0.7); text-decoration: none; cursor: pointer;
+      transition: background 0.12s;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.1); color: white; }
+    .nav-item.active { background: rgba(255,255,255,0.3); color: white; }
+    .nav-item .material-icons { font-size: 22px; }
+    .main-content {
+      margin-left: 64px; margin-top: 64px; flex: 1;
+      padding: var(--sp-lg); min-height: calc(100vh - 64px);
+      background: var(--primary-5pct); overflow-x: hidden; overflow-y: auto;
+      min-width: 0;
+    }
+
+    .page {
+      max-width: 900px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--grey-dark);
+      margin-bottom: var(--sp-sm);
+    }
+    .description {
+      font-size: 14px;
+      color: var(--grey-medium);
+      margin-bottom: var(--sp-reg);
+      line-height: 1.5;
+    }
+    .version-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-reg);
+    }
+    .version-card {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-reg);
+      padding: var(--sp-reg) var(--sp-md);
+      background: var(--white);
+      border-radius: var(--r-card);
+      box-shadow: var(--shadow-soft);
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.12s;
+    }
+    .version-card:hover {
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .version-card {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--grey-dark);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <header class="app-bar"></header>
+    <nav class="side-nav">
+      <a href="#" class="nav-item active" title="Accueil"><span class="material-icons">home</span></a>
+      <a href="#" class="nav-item" title="Décision"><span class="material-icons">dashboard</span></a>
+      <a href="#" class="nav-item" title="Budget"><span class="material-icons">account_balance</span></a>
+      <a href="#" class="nav-item" title="Prospective RH"><span class="material-icons">people</span></a>
+      <a href="#" class="nav-item" title="Notifications"><span class="material-icons">notifications</span></a>
+      <a href="#" class="nav-item" title="Centre d'aide"><span class="material-icons">help</span></a>
+    </nav>
+    <main class="main-content">
+  <div class="page">
+    <h1>Budget Timeline</h1>
+    <div class="version-list">
+      <a href="v1-horizontal-scroll.html" class="version-card">Proto 1</a>
+      <a href="v2-progress-list.html" class="version-card">Proto 2</a>
+    </div>
+  </div>
+    </main>
+  </div>
+</body>
+</html>
