@@ -8,20 +8,20 @@ const timelineConfig = {
   showPreviousYear: true,
   currentPhaseIndex: 2,
   phases: [
-    { label: "Ouverture de la saisie", dateStart: "2025-09-29", dateEnd: "2025-10-31" },
-    { label: "Arbitrage", dateStart: "2025-11-03", dateEnd: "2025-11-28" },
-    { label: "Vote du budget", dateStart: "2025-12-01", dateEnd: "2025-12-15" },
-    { label: "Budget supplémentaire", dateStart: "2026-01-10", dateEnd: null },
-    { label: "Clôture de l'arbitrage", dateStart: "2026-02-15", dateEnd: "2026-03-01" },
-    { label: "Révision budgétaire", dateStart: "2026-03-10", dateEnd: "2026-03-31" },
-    { label: "Contrôle intermédiaire", dateStart: "2026-04-15", dateEnd: null },
-    { label: "Validation finale", dateStart: "2026-05-20", dateEnd: "2026-06-01" },
+    { label: "Ouverture de la saisie", dateStart: "2025-09-29", dateEnd: "2025-10-31", icon: "edit" },
+    { label: "Arbitrage", dateStart: "2025-11-03", dateEnd: "2025-11-28", icon: "balance" },
+    { label: "Vote du budget", dateStart: "2025-12-01", dateEnd: "2025-12-15", icon: "how_to_vote" },
+    { label: "Budget supplémentaire", dateStart: "2026-01-10", dateEnd: null, icon: "refresh" },
+    { label: "Clôture de l'arbitrage", dateStart: "2026-02-15", dateEnd: "2026-03-01", icon: null },
+    { label: "Révision budgétaire", dateStart: "2026-03-10", dateEnd: "2026-03-31", icon: null },
+    { label: "Contrôle intermédiaire", dateStart: "2026-04-15", dateEnd: null, icon: null },
+    { label: "Validation finale", dateStart: "2026-05-20", dateEnd: "2026-06-01", icon: null },
   ],
   previousYearPhases: [
-    { label: "Ouverture de la saisie", dateStart: "2024-10-01", dateEnd: "2024-10-30" },
-    { label: "Arbitrage", dateStart: "2024-11-04", dateEnd: "2024-11-29" },
-    { label: "Vote du budget", dateStart: "2024-12-02", dateEnd: "2024-12-13" },
-    { label: "Budget supplémentaire", dateStart: "2025-01-08", dateEnd: null },
+    { label: "Ouverture de la saisie", dateStart: "2024-10-01", dateEnd: "2024-10-30", icon: "edit" },
+    { label: "Arbitrage", dateStart: "2024-11-04", dateEnd: "2024-11-29", icon: "balance" },
+    { label: "Vote du budget", dateStart: "2024-12-02", dateEnd: "2024-12-13", icon: "how_to_vote" },
+    { label: "Budget supplémentaire", dateStart: "2025-01-08", dateEnd: null, icon: "refresh" },
   ],
 };
 
@@ -68,6 +68,7 @@ function getStressTestConfig() {
     "Phase préparation 1", "Phase préparation 2", "Phase préparation 3", "Phase préparation 4",
     "Phase préparation 5", "Phase préparation 6", "Phase préparation 7",
   ];
+  const presetIcons = ["edit", "balance", "how_to_vote", "refresh"];
   const phases = [];
   for (let i = 0; i < 15; i++) {
     const m = months[i % months.length];
@@ -75,7 +76,7 @@ function getStressTestConfig() {
     const dateStart = `${m}-${String(d).padStart(2, "0")}`;
     const endDay = Math.min(d + 14, 28);
     const dateEnd = i % 3 === 2 ? null : `${m}-${String(endDay).padStart(2, "0")}`;
-    phases.push({ label: labels[i], dateStart, dateEnd });
+    phases.push({ label: labels[i], dateStart, dateEnd, icon: i < 4 ? presetIcons[i] : null });
   }
   return {
     ...timelineConfig,

@@ -37,8 +37,30 @@
     .app-bar {
       position: fixed; top: 0; left: 0; right: 0; height: 64px;
       background: var(--white); box-shadow: var(--shadow-soft); z-index: 100;
-      display: flex; align-items: center; justify-content: flex-end; padding: 0 var(--sp-reg); gap: var(--sp-sm);
+      display: flex; align-items: center; justify-content: flex-start; padding: 0 var(--sp-reg); gap: var(--sp-sm);
     }
+    .content-area { margin-left: 64px; margin-top: 64px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .budget-page-bar {
+      display: flex; align-items: center; justify-content: space-between; width: 100%;
+      padding: var(--sp-reg) var(--sp-lg); background: var(--white); border-bottom: 1px solid var(--grey-light);
+      flex-shrink: 0;
+    }
+    .budget-page-title { font-size: 20px; font-weight: 500; color: var(--grey-dark); }
+    .budget-banners { display: flex; align-items: center; gap: var(--sp-reg); }
+    .date-key-widget {
+      display: flex; align-items: center; gap: var(--sp-sm); padding: var(--sp-sm) var(--sp-reg);
+      border-radius: var(--r-card); border: 1px solid var(--grey-light); background: var(--grey-row);
+      min-width: 200px; max-width: 260px;
+    }
+    .date-key-widget.muted { background: #FAFAFA; border-color: var(--grey-border); }
+    .date-key-widget-icon { color: var(--grey-medium); flex-shrink: 0; }
+    .date-key-widget-icon .material-icons { font-size: 20px; }
+    .date-key-widget-content { flex: 1; min-width: 0; }
+    .date-key-widget-label { font-size: 10px; font-weight: 600; color: var(--grey-medium); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+    .date-key-widget-phase { font-size: 13px; font-weight: 600; color: var(--grey-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .date-key-widget.muted .date-key-widget-phase { color: var(--grey-medium); }
+    .date-key-widget-date { font-size: 11px; color: var(--grey-medium); }
+    .date-key-widget-chevron { color: var(--grey-medium); flex-shrink: 0; font-size: 14px; }
     .side-nav {
       position: fixed; top: 64px; left: 0; bottom: 0; width: 64px;
       background: var(--primary); display: flex; flex-direction: column;
@@ -55,8 +77,7 @@
     .nav-item .material-icons { font-size: 22px; }
     .nav-item span:not(.material-icons) { display: none; }
     .main-content {
-      margin-left: 64px; margin-top: 64px; flex: 1;
-      padding: var(--sp-lg); min-height: calc(100vh - 64px);
+      flex: 1; padding: var(--sp-lg); min-height: 0;
       background: var(--primary-5pct); overflow-x: hidden; overflow-y: auto;
       min-width: 0;
     }
@@ -85,22 +106,14 @@
     .timeline-wrapper.admin-mode { outline: 2px solid var(--primary); outline-offset: -1px; }
 
     .timeline-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--sp-reg); margin-bottom: var(--sp-reg); }
-    .timeline-title-wrap { display: flex; align-items: center; gap: var(--sp-sm); }
+    .timeline-title-wrap { display: flex; align-items: center; gap: var(--sp-sm); flex: 1; min-width: 0; }
     .timeline-title { font-size: 20px; font-weight: 500; color: var(--grey-dark); }
-    .timeline-title-edit { display: none; align-items: center; gap: var(--sp-sm); flex: 1; min-width: 200px; }
-    .timeline-title-edit input { flex: 1; padding: 6px 10px; font-size: 16px; font-family: var(--font); border: 1px solid var(--primary); border-radius: var(--r-btn); }
-    .timeline-title-edit input:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
-    .timeline-title-edit .icon-btn { width: 36px; height: 36px; flex-shrink: 0; }
-    .timeline-title-edit.visible { display: flex; }
-    .timeline-title-wrap .title-display { display: flex; align-items: center; gap: var(--sp-sm); }
-    .timeline-title-wrap .title-display.hidden { display: none; }
-    .title-edit-icon { opacity: 0; color: var(--grey-medium); cursor: pointer; font-size: 18px; }
-    .timeline-wrapper.admin-mode .timeline-title-wrap:hover .title-edit-icon { opacity: 1; }
-    .title-edit-icon:hover { color: var(--primary); }
+    .timeline-title-input { display: none; flex: 1; min-width: 200px; padding: 6px 10px; font-size: 18px; font-weight: 500; font-family: var(--font); border: 1px solid var(--primary); border-radius: var(--r-btn); }
+    .timeline-title-input:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+    .timeline-wrapper.admin-mode .timeline-title { display: none; }
+    .timeline-wrapper.admin-mode .timeline-title-input { display: block; }
 
     .timeline-controls { display: flex; align-items: center; gap: var(--sp-reg); flex-wrap: wrap; }
-    .toggle-row { display: flex; align-items: center; gap: var(--sp-sm); font-size: 14px; color: var(--grey-dark); }
-    .toggle-row input { accent-color: var(--primary); cursor: pointer; }
     .toggle-row { display: flex; align-items: center; gap: var(--sp-sm); font-size: 14px; color: var(--grey-dark); }
     .toggle-row input { accent-color: var(--primary); cursor: pointer; }
     .btn { padding: 8px 16px; font-family: var(--font); font-size: 14px; font-weight: 500; border-radius: var(--r-btn); cursor: pointer; border: none; min-height: 36px; display: inline-flex; align-items: center; gap: var(--sp-sm); transition: background 0.12s; }
@@ -151,6 +164,18 @@
       width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
       font-size: 13px; font-weight: 600; flex-shrink: 0; margin-bottom: 4px;
     }
+    .phase-circle.phase-circle-icon { font-size: 18px; font-weight: 400; }
+    .phase-circle .material-icons { font-size: 18px; }
+    .icon-picker { display: none; margin-top: 4px; position: relative; }
+    .admin-mode .icon-picker { display: block; }
+    .icon-picker-btn { padding: 4px 8px; font-size: 11px; border: 1px solid var(--grey-border); border-radius: var(--r-btn); background: var(--white); cursor: pointer; color: var(--grey-dark); display: inline-flex; align-items: center; gap: 4px; }
+    .icon-picker-btn .material-icons { font-size: 16px; }
+    .icon-picker-btn:hover { border-color: var(--primary); }
+    .icon-picker-dropdown { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 4px; padding: 6px; background: var(--white); border: 1px solid var(--grey-border); border-radius: var(--r-btn); box-shadow: 0 4px 12px rgba(0,0,0,0.12); z-index: 50; display: flex; gap: 4px; flex-wrap: wrap; }
+    .icon-picker-opt { width: 28px; height: 28px; border: none; background: var(--grey-row); border-radius: var(--r-btn); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+    .icon-picker-opt .material-icons { font-size: 18px; }
+    .icon-picker-opt:hover { background: var(--primary-bg); }
+    .icon-picker-opt.none { font-size: 10px; width: auto; padding: 0 6px; }
     .phase-chip.past .phase-circle { background: var(--grey-medium); color: white; border: none; }
     .phase-chip.current .phase-circle { background: var(--primary); color: white; border: none; }
     .phase-chip.future .phase-circle { background: var(--white); color: var(--grey-medium); border: 2px solid var(--grey-border); }
@@ -190,8 +215,18 @@
 
     .n1-section { margin-top: var(--sp-md); padding-top: var(--sp-reg); border-top: 1px solid var(--grey-border); overflow-x: auto; }
     .n1-title { font-size: 12px; font-weight: 600; color: var(--grey-medium); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--sp-reg); }
-    .n1-row { display: flex; flex-wrap: wrap; gap: var(--sp-sm); min-width: 0; }
-    .n1-phase { display: inline-flex; padding: 4px 10px; border-radius: var(--r-pill); background: var(--grey-row); font-size: 12px; color: var(--grey-medium); white-space: nowrap; }
+    .n1-row { display: flex; align-items: flex-start; gap: 0; min-width: max-content; flex-wrap: nowrap; }
+    .n1-connector { flex-shrink: 0; padding: 0 4px; min-height: 36px; display: flex; align-items: center; }
+    .n1-connector-inner { width: 16px; height: 2px; background: var(--grey-light); flex-shrink: 0; }
+    .n1-chip {
+      flex-shrink: 0; min-width: 100px; max-width: 140px; padding: 6px 10px 8px;
+      border-radius: var(--r-card); border: 1px solid var(--grey-light);
+      background: #F8F9FA; display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .n1-chip-circle { width: 28px; height: 28px; border-radius: 50%; background: var(--grey-medium); opacity: 0.6; color: white; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+    .n1-chip-circle .material-icons { font-size: 16px; }
+    .n1-chip-label { font-size: 12px; font-weight: 600; color: var(--grey-medium); line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; word-break: break-word; }
+    .n1-chip-dates { font-size: 11px; color: var(--grey-medium); opacity: 0.9; line-height: 1.2; margin-top: 2px; }
 
     .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
     .modal-backdrop.open { display: flex; }
@@ -219,6 +254,21 @@
       <a href="#" class="nav-item" title="Notifications"><span class="material-icons">notifications</span></a>
       <a href="#" class="nav-item" title="Centre d'aide"><span class="material-icons">help</span></a>
     </nav>
+    <div class="content-area">
+      <div class="budget-page-bar">
+        <span class="budget-page-title">Budget principal 2026</span>
+        <div class="budget-banners" id="budgetBanners">
+          <div class="date-key-widget muted" id="lastDateKeyWidget">
+            <div class="date-key-widget-icon" id="lastDateKeyIcon"></div>
+            <div class="date-key-widget-content">
+              <div class="date-key-widget-label">Dernière date clé</div>
+              <div class="date-key-widget-phase" id="lastDateKeyPhase" title=""></div>
+              <div class="date-key-widget-date" id="lastDateKeyDate"></div>
+            </div>
+            <span class="date-key-widget-chevron">›</span>
+          </div>
+        </div>
+      </div>
     <main class="main-content">
       <div class="page-header">
         <div>
@@ -238,15 +288,8 @@
       <div class="timeline-wrapper" id="timelineWrapper">
         <div class="timeline-header">
           <div class="timeline-title-wrap">
-            <div class="title-display" id="titleDisplay">
-              <span class="timeline-title" id="timelineTitle">Préparation budgétaire 2026</span>
-              <span class="title-edit-icon material-icons" id="titleEditIcon" title="Modifier le titre">edit</span>
-            </div>
-            <div class="timeline-title-edit" id="titleEditWrap">
-              <input type="text" id="titleEditInput" placeholder="Titre">
-              <button class="icon-btn" id="titleSaveBtn" title="Enregistrer"><span class="material-icons">check</span></button>
-              <button class="icon-btn" id="titleCancelBtn" title="Annuler"><span class="material-icons">close</span></button>
-            </div>
+            <span class="timeline-title" id="timelineTitle">Préparation budgétaire 2026</span>
+            <input type="text" class="timeline-title-input" id="titleEditInput" placeholder="Titre">
           </div>
           <div class="timeline-controls" id="timelineControls">
             <button class="btn btn-secondary" id="adminToggle">Éditer</button>
@@ -270,6 +313,7 @@
       </div>
 
     </main>
+    </div>
   </div>
 
   <div class="modal-backdrop" id="deleteModalBackdrop">
@@ -300,8 +344,6 @@
     const n1Row = document.getElementById("n1Row");
     const scrollViewport = document.getElementById("scrollViewport");
     const titleEl = document.getElementById("timelineTitle");
-    const titleDisplay = document.getElementById("titleDisplay");
-    const titleEditWrap = document.getElementById("titleEditWrap");
     const titleEditInput = document.getElementById("titleEditInput");
     const timelineWrapper = document.getElementById("timelineWrapper");
 
@@ -313,8 +355,20 @@
 
     function render() {
       titleEl.textContent = config.title;
-      titleDisplay.classList.remove("hidden");
-      titleEditWrap.classList.remove("visible");
+      titleEditInput.value = config.title;
+
+      const useIconsMode = config.phases.some(p => p.icon != null && p.icon !== "");
+      const useIconsModeN1 = config.previousYearPhases.some(p => p.icon != null && p.icon !== "");
+      const PLACEHOLDER_ICON = "lens";
+      const PRESET_ICONS = ["edit", "balance", "how_to_vote", "refresh"];
+
+      function renderCircleContent(icon, num, useIcons) {
+        if (useIcons) {
+          const ico = icon || PLACEHOLDER_ICON;
+          return `<span class="material-icons">${escapeHtml(ico)}</span>`;
+        }
+        return String(num);
+      }
 
       phasesRow.innerHTML = "";
       config.phases.forEach((phase, i) => {
@@ -329,12 +383,27 @@
         card.className = `phase-chip ${status}`;
         if (adminMode) card.classList.add("admin-mode");
 
+        const circleContent = renderCircleContent(phase.icon, i + 1, useIconsMode);
+        const circleClass = useIconsMode ? "phase-circle phase-circle-icon" : "phase-circle";
+
         const labelDisplay = `<span class="phase-label" title="${escapeHtml(phase.label)}">${escapeHtml(phase.label)}</span>`;
         const labelEdit = `
           <div class="phase-label-edit-wrap">
             <textarea class="phase-label-input" rows="2" data-i="${i}">${escapeHtml(phase.label)}</textarea>
             <button class="icon-btn phase-label-save" data-i="${i}" title="Enregistrer"><span class="material-icons">check</span></button>
             <button class="icon-btn phase-label-cancel" data-i="${i}" title="Annuler"><span class="material-icons">close</span></button>
+          </div>
+        `;
+
+        const iconPickerOpts = PRESET_ICONS.map(ico => `<button class="icon-picker-opt" data-icon="${escapeHtml(ico)}"><span class="material-icons">${escapeHtml(ico)}</span></button>`).join("");
+        const iconPickerBtnContent = phase.icon ? `<span class="material-icons">${escapeHtml(phase.icon)}</span>` : "Aucune icône";
+        const iconPicker = `
+          <div class="icon-picker">
+            <button class="icon-picker-btn" data-i="${i}">${iconPickerBtnContent}</button>
+            <div class="icon-picker-dropdown" data-i="${i}" style="display:none">
+              ${iconPickerOpts}
+              <button class="icon-picker-opt none" data-icon="">Aucune</button>
+            </div>
           </div>
         `;
 
@@ -346,12 +415,13 @@
           : `<span class="phase-dates">${formatPhaseDates(phase)}</span>`;
 
         card.innerHTML = `
-          <div class="phase-circle">${i + 1}</div>
+          <div class="${circleClass}">${circleContent}</div>
           <div class="phase-chip-header">
             ${labelDisplay}
             ${labelEdit}
             <button class="phase-delete" data-i="${i}" title="Supprimer la phase"><span class="material-icons">close</span></button>
           </div>
+          ${adminMode ? iconPicker : ""}
           ${dateEl}
           ${status === "current" ? '<span class="current-badge">Étape en cours</span>' : ""}
         `;
@@ -401,6 +471,26 @@
             document.getElementById("deletePhaseLabel").textContent = config.phases[i].label;
             document.getElementById("deleteModalBackdrop").classList.add("open");
           });
+
+          const pickerBtn = card.querySelector(".icon-picker-btn");
+          const pickerDropdown = card.querySelector(".icon-picker-dropdown");
+          if (pickerBtn && pickerDropdown) {
+            pickerBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const isOpen = pickerDropdown.style.display === "flex";
+              document.querySelectorAll(".icon-picker-dropdown").forEach(d => d.style.display = "none");
+              if (!isOpen) pickerDropdown.style.display = "flex";
+            });
+            pickerDropdown.querySelectorAll(".icon-picker-opt").forEach(opt => {
+              opt.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const val = opt.dataset.icon || null;
+                config.phases[i].icon = val || null;
+                pickerDropdown.style.display = "none";
+                render();
+              });
+            });
+          }
         }
         phasesRow.appendChild(card);
       });
@@ -409,7 +499,7 @@
       addBtn.className = "add-phase-btn";
       addBtn.innerHTML = '<span class="material-icons">add</span> Ajouter une phase';
       addBtn.onclick = () => {
-        config.phases.push({ label: "Nouvelle phase", dateStart: "2026-01-01", dateEnd: null });
+        config.phases.push({ label: "Nouvelle phase", dateStart: "2026-01-01", dateEnd: null, icon: null });
         render();
       };
       if (adminMode) phasesRow.appendChild(addBtn);
@@ -417,11 +507,22 @@
       n1Section.style.display = showN1 ? "block" : "none";
       n1Row.innerHTML = "";
       if (showN1) {
-        config.previousYearPhases.forEach(p => {
-          const el = document.createElement("div");
-          el.className = "n1-phase";
-          el.textContent = `${p.label} — ${formatPhaseDates(p)}`;
-          n1Row.appendChild(el);
+        config.previousYearPhases.forEach((p, i) => {
+          if (i > 0) {
+            const conn = document.createElement("div");
+            conn.className = "n1-connector";
+            conn.innerHTML = '<div class="n1-connector-inner"></div>';
+            n1Row.appendChild(conn);
+          }
+          const circleContent = renderCircleContent(p.icon, i + 1, useIconsModeN1);
+          const chip = document.createElement("div");
+          chip.className = "n1-chip";
+          chip.innerHTML = `
+            <div class="n1-chip-circle">${circleContent}</div>
+            <span class="n1-chip-label" title="${escapeHtml(p.label)}">${escapeHtml(p.label)}</span>
+            <span class="n1-chip-dates">${formatPhaseDates(p)}</span>
+          `;
+          n1Row.appendChild(chip);
         });
       }
 
@@ -429,6 +530,15 @@
       document.getElementById("adminToggle").classList.toggle("active", adminMode);
       timelineWrapper.classList.toggle("admin-mode", adminMode);
       updateScrollButtons();
+
+      const DEFAULT_ICON = "event";
+      const idx = config.currentPhaseIndex;
+      const currentPhase = config.phases[idx] || null;
+      const lastIcon = currentPhase && currentPhase.icon ? currentPhase.icon : DEFAULT_ICON;
+      document.getElementById("lastDateKeyPhase").textContent = currentPhase ? currentPhase.label : "—";
+      document.getElementById("lastDateKeyPhase").title = currentPhase ? currentPhase.label : "";
+      document.getElementById("lastDateKeyDate").textContent = currentPhase ? formatPhaseDates(currentPhase) : "";
+      document.getElementById("lastDateKeyIcon").innerHTML = currentPhase ? `<span class="material-icons">${escapeHtml(lastIcon)}</span>` : "";
     }
 
     function updateScrollButtons() {
@@ -466,28 +576,12 @@
       render();
     });
 
-    document.getElementById("titleEditIcon").addEventListener("click", () => {
-      if (!adminMode) return;
-      titleEditInput.value = config.title;
-      titleDisplay.classList.add("hidden");
-      titleEditWrap.classList.add("visible");
-      titleEditInput.focus();
-      titleEditInput.select();
-    });
-    document.getElementById("titleSaveBtn").addEventListener("click", () => {
+    titleEditInput.addEventListener("blur", () => {
       config.title = titleEditInput.value.trim() || config.title;
       titleEl.textContent = config.title;
-      titleDisplay.classList.remove("hidden");
-      titleEditWrap.classList.remove("visible");
-    });
-    document.getElementById("titleCancelBtn").addEventListener("click", () => {
-      titleEditInput.value = config.title;
-      titleDisplay.classList.remove("hidden");
-      titleEditWrap.classList.remove("visible");
     });
     titleEditInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") { e.preventDefault(); document.getElementById("titleSaveBtn").click(); }
-      if (e.key === "Escape") { e.preventDefault(); document.getElementById("titleCancelBtn").click(); }
+      if (e.key === "Enter") { e.preventDefault(); titleEditInput.blur(); }
     });
 
     document.getElementById("deleteModalClose").addEventListener("click", () => document.getElementById("deleteModalBackdrop").classList.remove("open"));
@@ -505,9 +599,15 @@
       }
     });
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && document.getElementById("deleteModalBackdrop").classList.contains("open")) {
-        document.getElementById("deleteModalBackdrop").classList.remove("open");
+      if (e.key === "Escape") {
+        if (document.getElementById("deleteModalBackdrop").classList.contains("open")) {
+          document.getElementById("deleteModalBackdrop").classList.remove("open");
+        }
+        document.querySelectorAll(".icon-picker-dropdown").forEach(d => d.style.display = "none");
       }
+    });
+    document.addEventListener("click", () => {
+      document.querySelectorAll(".icon-picker-dropdown").forEach(d => d.style.display = "none");
     });
 
     document.getElementById("scrollLeft").addEventListener("click", () => scrollViewport.scrollBy({ left: -250, behavior: "smooth" }));
